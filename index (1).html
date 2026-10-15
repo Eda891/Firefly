@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Firefly Cinema — One Screen, Every Night</title>
+<meta name="description" content="Firefly Cinema is a single-screen independent theatre showing a rotating bill of classics and new indies. Book your seat online." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@500;700;900&family=Work+Sans:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #14141a;
+    --bg-alt: #1b1b23;
+    --panel: #202029;
+    --cream: #F2ECE4;
+    --cream-dim: #b9b4ac;
+    --gold: #E3B23C;
+    --rose: #C97064;
+    --grey: #8B8B93;
+    --taken: #3a3a44;
+    --line: #33333e;
+    --radius: 3px;
+  }
+
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--cream);
+    font-family:'Work Sans', sans-serif;
+    line-height:1.5;
+  }
+  h1,h2,h3{
+    font-family:'Big Shoulders Display', sans-serif;
+    text-transform:uppercase;
+    letter-spacing:0.02em;
+    margin:0;
+  }
+  .mono{ font-family:'Space Mono', monospace; }
+  a{ color:inherit; }
+  img{ max-width:100%; display:block; }
+  .wrap{ max-width:1080px; margin:0 auto; padding:0 24px; }
+  section{ padding:88px 0; border-bottom:1px solid var(--line); }
+  .eyebrow{
+    font-family:'Space Mono', monospace;
+    font-size:12px;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    color:var(--rose);
+    margin-bottom:14px;
+    display:block;
+  }
+
+  /* ---------- Nav ---------- */
+  header.site{
+    position:sticky; top:0; z-index:40;
+    background:rgba(20,20,26,0.92);
+    backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line);
+  }
+  nav{
+    max-width:1080px; margin:0 auto; padding:16px 24px;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .logo{
+    font-family:'Big Shoulders Display', sans-serif;
+    font-weight:900;
+    font-size:22px;
+    letter-spacing:0.03em;
+    text-transform:uppercase;
+    text-decoration:none;
+  }
+  .logo span{ color:var(--gold); }
+  nav ul{
+    list-style:none; display:flex; gap:28px; margin:0; padding:0;
+    font-size:14px; letter-spacing:0.03em;
+  }
+  nav a{ text-decoration:none; color:var(--cream-dim); }
+  nav a:hover{ color:var(--gold); }
+  nav .book-btn{
+    background:var(--gold); color:#14141a; padding:9px 18px;
+    border-radius:var(--radius); font-weight:600; font-size:14px;
+  }
+  nav .book-btn:hover{ background:var(--cream); }
+  .nav-links{ display:flex; align-items:center; gap:28px; }
+
+  /* ---------- Hero / Marquee ---------- */
+  .hero{
+    padding:64px 0 96px;
+    border-bottom:1px solid var(--line);
+    background:
+      radial-gradient(ellipse at 20% -10%, rgba(227,178,60,0.10), transparent 55%),
+      radial-gradient(ellipse at 90% 0%, rgba(201,112,100,0.10), transparent 50%);
+  }
+  .marquee-frame{
+    border:1px solid var(--gold);
+    box-shadow: 0 0 0 4px rgba(227,178,60,0.08), 0 0 40px rgba(227,178,60,0.06) inset;
+    padding:40px 32px;
+    border-radius:6px;
+    position:relative;
+  }
+  .marquee-frame::before, .marquee-frame::after{
+    content:"";
+    position:absolute; top:10px; bottom:10px; width:1px;
+    background:repeating-linear-gradient(to bottom, var(--gold) 0 6px, transparent 6px 14px);
+    opacity:0.5;
+  }
+  .marquee-frame::before{ left:10px; }
+  .marquee-frame::after{ right:10px; }
+  .now-showing-tag{
+    font-family:'Space Mono', monospace; font-size:12px; letter-spacing:0.2em;
+    color:var(--gold); text-transform:uppercase; margin-bottom:18px; display:block;
+  }
+  .hero h1{
+    font-size:clamp(40px, 7vw, 84px);
+    line-height:0.94;
+    color:var(--cream);
+  }
+  .hero h1 em{ font-style:normal; color:var(--rose); }
+  .hero-meta{
+    margin-top:24px; display:flex; flex-wrap:wrap; gap:24px 40px;
+    font-family:'Space Mono', monospace; font-size:14px; color:var(--cream-dim);
+  }
+  .hero-meta div span{ display:block; color:var(--grey); font-size:11px; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:4px;}
+  .hero p.tagline{
+    margin-top:22px; max-width:520px; color:var(--cream-dim); font-size:16px;
+  }
+  .hero-actions{ margin-top:32px; display:flex; gap:14px; flex-wrap:wrap; }
+  .btn{
+    display:inline-block; padding:13px 24px; border-radius:var(--radius);
+    font-weight:600; font-size:14px; letter-spacing:0.02em; cursor:pointer;
+    border:1px solid transparent; text-decoration:none;
+  }
+  .btn-primary{ background:var(--gold); color:#14141a; }
+  .btn-primary:hover{ background:var(--cream); }
+  .btn-ghost{ background:transparent; border-color:var(--line); color:var(--cream); }
+  .btn-ghost:hover{ border-color:var(--gold); color:var(--gold); }
+
+  /* ---------- Now Showing schedule ---------- */
+  .schedule{
+    display:grid; grid-template-columns:repeat(3, 1fr); gap:1px;
+    background:var(--line); border:1px solid var(--line); margin-top:36px;
+  }
+  .film-card{
+    background:var(--bg-alt); padding:22px;
+  }
+  .film-card .idx{ font-family:'Space Mono', monospace; color:var(--grey); font-size:12px; }
+  .film-card h3{ font-size:24px; margin:14px 0 4px; color:var(--cream); }
+  .film-card h3 a{ text-decoration:none; color:inherit; }
+  .film-card h3 a:hover{ color:var(--gold); }
+  .film-card p{ color:var(--cream-dim); font-size:14px; margin:0 0 14px; }
+  .film-card .times{ font-family:'Space Mono', monospace; font-size:13px; color:var(--gold); }
+  .official-link{ font-family:'Space Mono', monospace; font-size:11px; color:var(--rose); text-decoration:none; }
+  .official-link:hover{ text-decoration:underline; }
+
+  /* Poster art: original CSS gradients + simple SVG shapes for three fictional films
+     invented for this site — no real films, posters, or studio artwork involved. */
+  .poster{
+    aspect-ratio:2/3; border-radius:5px; border:1px solid var(--line);
+    position:relative; overflow:hidden; padding:16px;
+    display:flex; flex-direction:column; justify-content:space-between;
+  }
+  .poster::after{
+    content:""; position:absolute; inset:0;
+    background:repeating-linear-gradient(0deg, rgba(0,0,0,0.08) 0 2px, transparent 2px 4px);
+    pointer-events:none;
+  }
+  .poster .p-eyebrow{ font-family:'Space Mono', monospace; font-size:10px; letter-spacing:0.2em; text-transform:uppercase; opacity:0.9; text-shadow:0 1px 4px rgba(0,0,0,0.6); }
+  .poster h4{ font-family:'Big Shoulders Display'; font-weight:900; line-height:0.92; font-size:30px; text-transform:uppercase; margin:0; text-shadow:0 2px 8px rgba(0,0,0,0.6); }
+  .poster .p-foot{ font-family:'Space Mono', monospace; font-size:10px; letter-spacing:0.08em; opacity:0.9; text-shadow:0 1px 4px rgba(0,0,0,0.6); }
+  .poster-art{ position:absolute; inset:0; width:100%; height:100%; z-index:0; pointer-events:none; opacity:0.9; }
+  .poster .p-eyebrow, .poster h4, .poster .p-foot{ position:relative; z-index:1; }
+  .poster.hollow-choir{
+    background: radial-gradient(circle at 50% 20%, #4a1116 0%, #14060a 70%);
+    color:#F2ECE4; border-color:#7a1c22;
+  }
+  .poster.star-machine{
+    background: linear-gradient(160deg, #2b2160 0%, #171233 100%);
+    color:#F2ECE4; border-color:#6a5fc7;
+  }
+  .poster.meridian{
+    background: linear-gradient(180deg, #7a5a2e 0%, #2b2410 60%, #14141a 100%);
+    color:#F2ECE4; border-color:var(--gold);
+  }
+
+  .genre-tags{ display:flex; gap:6px; flex-wrap:wrap; margin-top:2px; }
+  .genre-tag{
+    font-family:'Space Mono', monospace; font-size:10px; text-transform:uppercase; letter-spacing:0.04em;
+    border:1px solid var(--line); padding:3px 9px; border-radius:20px; color:var(--cream-dim);
+  }
+
+  /* ---------- About ---------- */
+  .about-grid{ display:grid; grid-template-columns: 1.1fr 0.9fr; gap:56px; align-items:start; }
+  .about-grid p{ color:var(--cream-dim); font-size:16px; margin:0 0 16px; max-width:52ch; }
+  .stat-list{ display:flex; flex-direction:column; gap:22px; }
+  .stat{ border-left:2px solid var(--gold); padding-left:16px; }
+  .stat .num{ font-family:'Big Shoulders Display'; font-size:36px; color:var(--cream); line-height:1; }
+  .stat .label{ font-size:13px; color:var(--grey); text-transform:uppercase; letter-spacing:0.06em; margin-top:4px;}
+
+  /* ---------- Booking ---------- */
+  #booking{ background:var(--bg-alt); }
+  .booking-shell{
+    background:var(--panel); border:1px solid var(--line); border-radius:8px;
+    padding:36px; margin-top:36px;
+  }
+  .film-select{
+    display:flex; gap:10px; flex-wrap:wrap; margin-bottom:32px;
+  }
+  .film-select button{
+    background:transparent; border:1px solid var(--line); color:var(--cream-dim);
+    padding:9px 16px; border-radius:20px; font-size:13px; cursor:pointer; font-family:'Work Sans';
+  }
+  .film-select button.active{ border-color:var(--gold); color:var(--gold); background:rgba(227,178,60,0.08); }
+
+  .screen-arc{
+    height:44px; margin:0 auto 40px; max-width:520px;
+    border-radius:0 0 60% 60% / 0 0 100% 100%;
+    background:linear-gradient(to bottom, rgba(227,178,60,0.55), rgba(227,178,60,0.02));
+    position:relative;
+  }
+  .screen-arc span{
+    position:absolute; top:-22px; left:50%; transform:translateX(-50%);
+    font-family:'Space Mono', monospace; font-size:11px; letter-spacing:0.3em;
+    color:var(--grey); text-transform:uppercase;
+  }
+
+  .seat-map{ display:flex; flex-direction:column; align-items:center; gap:8px; }
+  .seat-row{ display:flex; align-items:center; gap:8px; }
+  .row-label{
+    width:18px; font-family:'Space Mono', monospace; font-size:12px; color:var(--grey);
+  }
+  .seat{
+    width:34px; height:30px; border-radius:5px 5px 3px 3px; border:none; cursor:pointer;
+    background:var(--bg); border:1px solid var(--line); color:var(--cream-dim);
+    font-family:'Space Mono', monospace; font-size:10px;
+    transition:transform .12s ease;
+  }
+  .seat:hover:not(:disabled){ transform:translateY(-2px); border-color:var(--gold); }
+  .seat.selected{ background:var(--gold); border-color:var(--gold); color:#14141a; font-weight:700; }
+  .seat.taken{ background:var(--taken); color:#65656f; cursor:not-allowed; border-color:var(--taken); }
+  .seat.mine{ background:var(--rose); border-color:var(--rose); color:#14141a; font-weight:700; }
+  .seat.mine:hover{ outline:2px solid var(--cream); outline-offset:1px; }
+
+  .legend{ display:flex; gap:22px; justify-content:center; margin-top:26px; font-size:12px; color:var(--cream-dim); flex-wrap:wrap; }
+  .legend i{ display:inline-block; width:12px; height:12px; border-radius:3px; margin-right:6px; vertical-align:-1px; }
+  .legend .a i{ background:var(--bg); border:1px solid var(--line); }
+  .legend .s i{ background:var(--gold); }
+  .legend .t i{ background:var(--taken); }
+  .legend .m i{ background:var(--rose); }
+
+  .booking-fields{
+    display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:28px;
+  }
+  .booking-fields .field label{
+    display:block; font-size:12px; color:var(--grey); text-transform:uppercase;
+    letter-spacing:0.06em; margin-bottom:6px;
+  }
+  .booking-fields .field input{
+    width:100%; background:var(--bg-alt); border:1px solid var(--line); color:var(--cream);
+    padding:11px 13px; border-radius:var(--radius); font-family:'Work Sans'; font-size:14px;
+  }
+  .booking-fields .field input:focus{ outline:none; border-color:var(--gold); }
+  .booking-fields .field input.field-error{ border-color:var(--rose); }
+
+  .booking-footer{
+    display:flex; justify-content:space-between; align-items:center; margin-top:32px;
+    flex-wrap:wrap; gap:16px; border-top:1px solid var(--line); padding-top:24px;
+  }
+  .booking-msg{ font-size:13px; color:var(--rose); min-height:18px; font-family:'Space Mono', monospace; }
+  .picked-count{ font-family:'Space Mono', monospace; font-size:13px; color:var(--cream-dim); }
+
+  /* Ticket confirmation */
+  .ticket{
+    display:none; margin-top:32px; background:var(--cream); color:#14141a;
+    border-radius:8px; padding:0; overflow:hidden;
+    box-shadow:0 20px 40px rgba(0,0,0,0.35);
+  }
+  .ticket.show{ display:block; }
+  .ticket-main{ padding:28px 28px 20px; display:flex; justify-content:space-between; gap:20px; flex-wrap:wrap; }
+  .ticket-main h3{ font-size:28px; }
+  .ticket-main .sub{ font-family:'Space Mono', monospace; font-size:12px; color:#66625a; margin-top:6px; }
+  .ticket-stub{
+    border-top:2px dashed #14141a33; padding:16px 28px; display:flex; justify-content:space-between;
+    font-family:'Space Mono', monospace; font-size:12px; align-items:center; flex-wrap:wrap; gap:10px;
+  }
+  .ticket-stub .seats{ font-weight:700; letter-spacing:0.05em; }
+  .ticket-reset{ background:none; border:none; text-decoration:underline; cursor:pointer; font-family:'Space Mono', monospace; font-size:12px; color:#14141a; }
+
+  /* ---------- My Reservations ---------- */
+  #myres{ background:var(--bg-alt); }
+  .res-lookup{
+    background:var(--panel); border:1px solid var(--line); border-radius:8px;
+    padding:32px; margin-top:36px;
+  }
+  .res-lookup-form{ display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end; }
+  .res-lookup-form .field{ flex:1; min-width:220px; }
+  .res-lookup-form .field label{
+    display:block; font-size:12px; color:var(--grey); text-transform:uppercase;
+    letter-spacing:0.06em; margin-bottom:6px;
+  }
+  .res-lookup-form .field input{
+    width:100%; background:var(--bg-alt); border:1px solid var(--line); color:var(--cream);
+    padding:11px 13px; border-radius:var(--radius); font-family:'Work Sans'; font-size:14px;
+  }
+  .res-lookup-form .field input:focus{ outline:none; border-color:var(--gold); }
+  .res-results{ margin-top:26px; }
+  .res-empty{ color:var(--cream-dim); font-size:14px; font-family:'Space Mono', monospace; }
+  .res-item{
+    display:flex; justify-content:space-between; align-items:center; gap:16px;
+    padding:16px 0; border-bottom:1px solid var(--line); flex-wrap:wrap;
+  }
+  .res-item:last-child{ border-bottom:none; }
+  .res-item .res-film{ font-weight:600; color:var(--cream); }
+  .res-item .res-meta{ font-family:'Space Mono', monospace; font-size:12px; color:var(--cream-dim); margin-top:4px; }
+  .res-item button{
+    background:transparent; border:1px solid var(--rose); color:var(--rose);
+    padding:7px 14px; border-radius:var(--radius); font-size:12px; cursor:pointer; font-family:'Work Sans';
+  }
+  .res-item button:hover{ background:var(--rose); color:#14141a; }
+
+  /* ---------- Visit / contact ---------- */
+  .visit-grid{ display:grid; grid-template-columns: 1fr 1fr; gap:56px; }
+  .info-line{ display:flex; justify-content:space-between; padding:14px 0; border-bottom:1px solid var(--line); font-size:14px; }
+  .info-line span:first-child{ color:var(--grey); text-transform:uppercase; font-size:12px; letter-spacing:0.08em; }
+  form.contact{ display:flex; flex-direction:column; gap:14px; }
+  form.contact input, form.contact textarea{
+    background:var(--bg-alt); border:1px solid var(--line); color:var(--cream);
+    padding:12px 14px; border-radius:var(--radius); font-family:'Work Sans'; font-size:14px; resize:vertical;
+  }
+  form.contact label{ font-size:12px; color:var(--grey); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:-8px; }
+  form.contact button{ align-self:flex-start; margin-top:6px; }
+  .form-note{ font-size:12px; color:var(--grey); margin-top:10px; font-family:'Space Mono', monospace; }
+
+  footer{ padding:36px 0; text-align:center; color:var(--grey); font-size:13px; }
+  footer .logo{ font-size:16px; display:block; margin-bottom:8px; }
+
+  @media (max-width: 760px){
+    section{ padding:56px 0; }
+    .about-grid, .visit-grid{ grid-template-columns:1fr; gap:36px; }
+    .schedule{ grid-template-columns:1fr; }
+    .nav-links{ gap:16px; }
+    nav ul{ display:none; }
+    .seat{ width:28px; height:26px; }
+    .booking-shell{ padding:22px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site">
+  <nav>
+    <a class="logo" href="#top">Fire<span>fly</span></a>
+    <div class="nav-links">
+      <ul>
+        <li><a href="#showing">Now Showing</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#myres">My Reservations</a></li>
+        <li><a href="#visit">Visit</a></li>
+      </ul>
+      <a class="book-btn" href="#booking">Book Seats</a>
+    </div>
+  </nav>
+</header>
+
+<div id="top"></div>
+
+<section class="hero">
+  <div class="wrap">
+    <div class="marquee-frame">
+      <span class="now-showing-tag">Tonight · One Screen Only</span>
+      <h1>A small room.<br>A big <em>picture.</em></h1>
+      <p class="tagline">Firefly is a 30-seat independent cinema showing one film a night — this week that's a horror phenomenon, a family favourite, and the summer's biggest epic.</p>
+      <div class="hero-meta">
+        <div><span>Tonight</span>The Hollow Choir · 9:30 PM</div>
+        <div><span>Seats left</span><span id="heroSeatsLeft">—</span></div>
+        <div><span>Location</span>14 Mill Row, Riverside</div>
+      </div>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#booking">Reserve a seat</a>
+        <a class="btn btn-ghost" href="#showing">See this week's films</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="showing">
+  <div class="wrap">
+    <span class="eyebrow">This week</span>
+    <h2 style="font-size:40px;">Now showing</h2>
+    <div class="schedule">
+      <div class="film-card">
+        <div class="poster hollow-choir">
+          <span class="p-eyebrow">Firefly Selects</span>
+          <svg class="poster-art" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+            <polygon points="50,8 20,55 80,55" fill="rgba(0,0,0,0.35)"/>
+            <circle cx="50" cy="30" r="9" fill="rgba(227,178,60,0.55)"/>
+            <rect x="46" y="55" width="8" height="30" fill="rgba(0,0,0,0.4)"/>
+          </svg>
+          <h4>The Hollow Choir</h4>
+          <span class="p-foot">Dir. Mira Voss</span>
+        </div>
+        <span class="idx">Screen · Tonight</span>
+        <h3>The Hollow Choir</h3>
+        <div class="genre-tags">
+          <span class="genre-tag">Horror</span>
+          <span class="genre-tag">Supernatural</span>
+          <span class="genre-tag">Thriller</span>
+        </div>
+        <p style="margin-top:12px;">A grieving choir director keeps hearing a fourth voice in rehearsal — one that shouldn't be able to sing.</p>
+        <div class="times">9:30 PM</div>
+      </div>
+      <div class="film-card">
+        <div class="poster star-machine">
+          <span class="p-eyebrow">Firefly Family</span>
+          <svg class="poster-art" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+            <circle cx="24" cy="20" r="3" fill="rgba(255,255,255,0.7)"/>
+            <circle cx="70" cy="14" r="2" fill="rgba(255,255,255,0.6)"/>
+            <circle cx="82" cy="34" r="2.5" fill="rgba(255,255,255,0.65)"/>
+            <circle cx="16" cy="42" r="2" fill="rgba(255,255,255,0.5)"/>
+            <rect x="34" y="46" width="32" height="26" rx="6" fill="rgba(20,20,26,0.35)"/>
+            <circle cx="50" cy="40" r="9" fill="rgba(20,20,26,0.35)"/>
+          </svg>
+          <h4>Sprocket &amp; the Star Machine</h4>
+          <span class="p-foot">Dir. Tomas Ng &amp; Priya Patel</span>
+        </div>
+        <span class="idx">Screen · Saturday</span>
+        <h3>Sprocket &amp; the Star Machine</h3>
+        <div class="genre-tags">
+          <span class="genre-tag">Animation</span>
+          <span class="genre-tag">Comedy</span>
+          <span class="genre-tag">Adventure</span>
+          <span class="genre-tag">Family</span>
+        </div>
+        <p style="margin-top:12px;">A wind-up inventor robot and his firefly co-pilot race to relight the night sky before the last star burns out.</p>
+        <div class="times">2:00 PM · 4:30 PM</div>
+      </div>
+      <div class="film-card">
+        <div class="poster meridian">
+          <span class="p-eyebrow">Firefly Presents</span>
+          <svg class="poster-art" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+            <polygon points="0,70 25,35 40,55 60,20 80,50 100,70 100,90 0,90" fill="rgba(20,20,26,0.4)"/>
+            <circle cx="78" cy="22" r="10" fill="rgba(255,236,190,0.55)"/>
+          </svg>
+          <h4>Meridian</h4>
+          <span class="p-foot">Dir. Elena Kastor</span>
+        </div>
+        <span class="idx">Screen · Opening Fri</span>
+        <h3>Meridian</h3>
+        <div class="genre-tags">
+          <span class="genre-tag">Adventure</span>
+          <span class="genre-tag">Action</span>
+          <span class="genre-tag">Fantasy</span>
+        </div>
+        <p style="margin-top:12px;">A cartographer chasing a myth finds that the edge of the map is closer — and stranger — than she ever expected.</p>
+        <div class="times">7:00 PM · 9:45 PM</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="wrap about-grid">
+    <div>
+      <span class="eyebrow">Who we are</span>
+      <h2 style="font-size:38px; margin-bottom:18px;">One screen, run by people who watch every film twice</h2>
+      <p>Firefly opened in 2019 in a converted print shop on Mill Row. We only ever show one film a night, so every screening gets a full house's worth of attention — proper projection, a real intermission, and someone at the door who's actually seen the movie.</p>
+      <p>We program a mix of restored prints, first-run indies, and local shorts nights. No pre-show ads, no assigned popcorn combos — just a small room that takes film seriously.</p>
+    </div>
+    <div class="stat-list">
+      <div class="stat"><div class="num">30</div><div class="label">Seats in the house</div></div>
+      <div class="stat"><div class="num">7</div><div class="label">Nights programmed a week</div></div>
+      <div class="stat"><div class="num">2019</div><div class="label">Year we opened</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="booking">
+  <div class="wrap">
+    <span class="eyebrow">Reserve online</span>
+    <h2 style="font-size:40px;">Book your seat</h2>
+    <p style="color:var(--cream-dim); max-width:60ch; margin-top:10px;">Pick a screening, then choose your seats on the map below. Taken seats are shown in grey — everything else is yours.</p>
+
+    <div class="booking-shell">
+      <div class="booking-fields">
+        <div class="field">
+          <label for="bookingName">Name</label>
+          <input id="bookingName" type="text" placeholder="Your name" autocomplete="name" />
+        </div>
+        <div class="field">
+          <label for="bookingEmail">Email</label>
+          <input id="bookingEmail" type="email" placeholder="you@example.com" autocomplete="email" />
+        </div>
+      </div>
+
+      <div class="film-select" id="filmSelect">
+        <button class="active" data-film="The Hollow Choir — 9:30 PM">The Hollow Choir · 9:30 PM</button>
+        <button data-film="Sprocket &amp; the Star Machine — 2:00 PM">Sprocket &amp; the Star Machine · 2:00 PM</button>
+        <button data-film="Sprocket &amp; the Star Machine — 4:30 PM">Sprocket &amp; the Star Machine · 4:30 PM</button>
+        <button data-film="Meridian — 7:00 PM">Meridian · 7:00 PM</button>
+        <button data-film="Meridian — 9:45 PM">Meridian · 9:45 PM</button>
+      </div>
+
+      <div class="screen-arc"><span>Screen this way</span></div>
+
+      <div class="seat-map" id="seatMap"></div>
+
+      <div class="legend">
+        <span class="a"><i></i>Available</span>
+        <span class="s"><i></i>Selected</span>
+        <span class="m"><i></i>Your seats (tap to cancel)</span>
+        <span class="t"><i></i>Taken</span>
+      </div>
+
+      <div class="booking-footer">
+        <div>
+          <div class="picked-count" id="pickedCount">0 seats selected</div>
+          <div class="booking-msg" id="bookingMsg"></div>
+        </div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <button class="btn btn-ghost" id="randomBtn" type="button">Pick a random seat</button>
+          <button class="btn btn-primary" id="confirmBtn" type="button">Confirm booking</button>
+        </div>
+      </div>
+
+      <div class="ticket" id="ticket">
+        <div class="ticket-main">
+          <div>
+            <h3 id="ticketFilm">—</h3>
+            <div class="sub" id="ticketMeta">—</div>
+          </div>
+          <div style="text-align:right;">
+            <div class="sub">Firefly Cinema</div>
+            <div class="sub">14 Mill Row, Riverside</div>
+          </div>
+        </div>
+        <div class="ticket-stub">
+          <span>Admit <span id="ticketQty">0</span> · Seat(s) <span class="seats" id="ticketSeats">—</span></span>
+          <button class="ticket-reset" id="ticketReset" type="button">Book another seat →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="myres">
+  <div class="wrap">
+    <span class="eyebrow">Look yourself up</span>
+    <h2 style="font-size:40px;">My reservations</h2>
+    <p style="color:var(--cream-dim); max-width:60ch; margin-top:10px;">Enter the email you booked with to see every seat reserved under it, across all screenings — and cancel any you can no longer make.</p>
+
+    <div class="res-lookup">
+      <form class="res-lookup-form" id="resLookupForm">
+        <div class="field">
+          <label for="resEmail">Email</label>
+          <input id="resEmail" type="email" placeholder="you@example.com" required autocomplete="email" />
+        </div>
+        <button class="btn btn-primary" type="submit">Find my reservations</button>
+      </form>
+      <div class="res-results" id="resResults">
+        <div class="res-empty">Enter your email above to see your bookings.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="visit">
+  <div class="wrap visit-grid">
+    <div>
+      <span class="eyebrow">Find us</span>
+      <h2 style="font-size:36px; margin-bottom:22px;">Visit Firefly</h2>
+      <div class="info-line"><span>Address</span><span>14 Mill Row, Riverside</span></div>
+      <div class="info-line"><span>Box office</span><span>Opens 6:30 PM nightly</span></div>
+      <div class="info-line"><span>Phone</span><span>(555) 013-0447</span></div>
+      <div class="info-line"><span>Email</span><span>hello@fireflycinema.example</span></div>
+      <div class="info-line"><span>Bar</span><span>Wine, beer &amp; local soda from 6 PM</span></div>
+    </div>
+    <div>
+      <span class="eyebrow">Ask us something</span>
+      <h2 style="font-size:36px; margin-bottom:22px;">Get in touch</h2>
+      <form class="contact" id="contactForm">
+        <div>
+          <label for="cf-name">Name</label>
+          <input id="cf-name" type="text" placeholder="Your name" required />
+        </div>
+        <div>
+          <label for="cf-email">Email</label>
+          <input id="cf-email" type="email" placeholder="you@example.com" required />
+        </div>
+        <div>
+          <label for="cf-msg">Message</label>
+          <textarea id="cf-msg" rows="4" placeholder="Private hire, group bookings, lost property…" required></textarea>
+        </div>
+        <button class="btn btn-primary" type="submit">Send message</button>
+      </form>
+      <div class="form-note" id="formNote"></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span class="logo">Night<span style="color:var(--gold);">light</span> Cinema</span>
+  14 Mill Row, Riverside · One screen, every night · © 2026
+</footer>
+
+<script>
+(function(){
+  // ---- Seat map state: 5 rows (A–E) x 6 seats, per selected screening ----
+  const ROWS = ["A","B","C","D","E"];
+  const COLS = 6;
+  const STORAGE_KEY = "firefly_reservations_v1";
+
+  // ---- Persistence layer -------------------------------------------------
+  // Everything the app needs to survive a refresh lives in one localStorage
+  // record: the confirmed bookings (each carries the booker's name + email,
+  // so seats are tied to an identity, not just a browser session) plus the
+  // per-screening "taken" grids so re-seeded demo seats don't reshuffle.
+  function loadState(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(raw){
+        const parsed = JSON.parse(raw);
+        if(parsed && Array.isArray(parsed.bookings) && parsed.grids){
+          return parsed;
+        }
+      }
+    }catch(e){ /* corrupted or unavailable storage — fall through to fresh state */ }
+    return { bookings: [], grids: {} };
+  }
+
+  const state = loadState();
+
+  function saveState(){
+    try{
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }catch(e){
+      msgEl && (msgEl.textContent = "Couldn't save your booking to this browser's storage.");
+    }
+  }
+
+  // Base grid for a screening: taken seats derived from confirmed bookings,
+  // plus a one-time random seed (persisted) so the house feels lived-in.
+  function seatsFor(film){
+    if(!state.grids[film]){
+      const grid = Array.from({length: ROWS.length}, () => Array(COLS).fill(0));
+      const preset = [[0,2],[1,3],[2,0],[2,5],[3,1]];
+      preset.forEach(([r,c]) => { if(Math.random() > 0.4) grid[r][c] = 1; });
+      state.grids[film] = grid;
+      saveState();
+    }
+    const grid = state.grids[film].map(row => row.slice());
+    bookingsFor(film).forEach(b => { grid[b.row][b.col] = 1; });
+    return grid;
+  }
+
+  function bookingsFor(film){
+    return state.bookings.filter(b => b.film === film);
+  }
+
+  function normEmail(e){ return (e || "").trim().toLowerCase(); }
+
+  // Booking name/email and the searched email are user-controlled and get
+  // dropped into innerHTML in the reservations list — escape them so a name
+  // like "<b>Al</b>" or an email containing markup can't break rendering
+  // or inject markup into the page.
+  function escapeHtml(str){
+    return String(str)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  // Seats *you* (the identity currently entered in the booking form) have
+  // confirmed for this screening — kept separate from the general "taken"
+  // grid so we know which ones you're allowed to cancel.
+  function mySeatsFor(film){
+    const email = normEmail(nameEmailEl().email);
+    if(!email) return [];
+    return bookingsFor(film)
+      .filter(b => normEmail(b.email) === email)
+      .map(b => [b.row, b.col]);
+  }
+
+  function nameEmailEl(){
+    return {
+      name: document.getElementById("bookingName").value,
+      email: document.getElementById("bookingEmail").value
+    };
+  }
+
+  let currentFilm = document.querySelector('#filmSelect button.active').dataset.film;
+  let selected = []; // [[r,c], ...] chosen but not yet confirmed
+
+  const seatMapEl = document.getElementById("seatMap");
+  const msgEl = document.getElementById("bookingMsg");
+  const countEl = document.getElementById("pickedCount");
+  const heroSeatsLeft = document.getElementById("heroSeatsLeft");
+
+  function seatsLeft(grid){
+    return grid.flat().filter(v => v === 0).length;
+  }
+
+  function renderSeatMap(){
+    const grid = seatsFor(currentFilm);
+    seatMapEl.innerHTML = "";
+    ROWS.forEach((rowLabel, r) => {
+      const rowEl = document.createElement("div");
+      rowEl.className = "seat-row";
+
+      const label = document.createElement("span");
+      label.className = "row-label";
+      label.textContent = rowLabel;
+      rowEl.appendChild(label);
+
+      for(let c = 0; c < COLS; c++){
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "seat";
+        btn.textContent = c + 1;
+
+        const isTaken = grid[r][c] === 1;
+        const isMine = mySeatsFor(currentFilm).some(([sr, sc]) => sr === r && sc === c);
+        const isSelected = selected.some(([sr, sc]) => sr === r && sc === c);
+
+        if(isMine){
+          btn.classList.add("mine");
+        } else if(isTaken){
+          btn.classList.add("taken");
+          btn.disabled = true;
+        } else if(isSelected){
+          btn.classList.add("selected");
+        }
+
+        btn.setAttribute("aria-label",
+          `Seat ${rowLabel}${c+1}${isMine ? ", booked by you, tap to cancel" : isTaken ? ", taken" : isSelected ? ", selected" : ", available"}`);
+
+        btn.addEventListener("click", () => {
+          if(isMine){ cancelSeat(r, c); } else { toggleSeat(r, c); }
+        });
+        rowEl.appendChild(btn);
+      }
+      seatMapEl.appendChild(rowEl);
+    });
+
+    countEl.textContent = `${selected.length} seat${selected.length === 1 ? "" : "s"} selected`;
+    if(heroSeatsLeft) heroSeatsLeft.textContent = seatsLeft(grid);
+  }
+
+  function toggleSeat(r, c){
+    const grid = seatsFor(currentFilm);
+    if(grid[r][c] === 1) return;
+
+    const idx = selected.findIndex(([sr, sc]) => sr === r && sc === c);
+    if(idx > -1){
+      selected.splice(idx, 1);
+      msgEl.textContent = "";
+    } else {
+      if(selected.length >= 6){
+        msgEl.textContent = "You can hold up to 6 seats at once.";
+        return;
+      }
+      selected.push([r, c]);
+      msgEl.textContent = "";
+    }
+    renderSeatMap();
+  }
+
+  function cancelSeat(r, c){
+    const email = normEmail(nameEmailEl().email);
+    const idx = state.bookings.findIndex(b =>
+      b.film === currentFilm && b.row === r && b.col === c && normEmail(b.email) === email);
+    if(idx > -1) state.bookings.splice(idx, 1);
+    saveState();
+    msgEl.textContent = `Seat ${ROWS[r]}${c + 1} canceled — it's open again.`;
+    updateTicketDisplay();
+    renderSeatMap();
+  }
+
+  function updateTicketDisplay(){
+    const mine = mySeatsFor(currentFilm);
+    const ticketEl = document.getElementById("ticket");
+    if(mine.length === 0){
+      ticketEl.classList.remove("show");
+      return;
+    }
+    const seatNames = mine
+      .slice()
+      .sort((a, b) => a[0] - b[0] || a[1] - b[1])
+      .map(([r, c]) => `${ROWS[r]}${c + 1}`);
+    document.getElementById("ticketFilm").textContent = currentFilm.split(" — ")[0];
+    document.getElementById("ticketMeta").textContent = currentFilm.split(" — ")[1] || "";
+    document.getElementById("ticketQty").textContent = seatNames.length;
+    document.getElementById("ticketSeats").textContent = seatNames.join(", ");
+    ticketEl.classList.add("show");
+  }
+
+  document.getElementById("filmSelect").addEventListener("click", (e) => {
+    const btn = e.target.closest("button[data-film]");
+    if(!btn) return;
+    document.querySelectorAll("#filmSelect button").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    currentFilm = btn.dataset.film;
+    selected = [];
+    updateTicketDisplay();
+    renderSeatMap();
+  });
+
+  document.getElementById("randomBtn").addEventListener("click", () => {
+    const grid = seatsFor(currentFilm);
+    const free = [];
+    for(let r = 0; r < ROWS.length; r++){
+      for(let c = 0; c < COLS; c++){
+        if(grid[r][c] === 0 && !selected.some(([sr,sc]) => sr===r && sc===c)) free.push([r,c]);
+      }
+    }
+    if(free.length === 0){
+      msgEl.textContent = "This screening is sold out.";
+      return;
+    }
+    const pick = free[Math.floor(Math.random() * free.length)];
+    selected.push(pick);
+    msgEl.textContent = `Picked seat ${ROWS[pick[0]]}${pick[1]+1} for you.`;
+    renderSeatMap();
+  });
+
+  document.getElementById("confirmBtn").addEventListener("click", () => {
+    const nameInput = document.getElementById("bookingName");
+    const emailInput = document.getElementById("bookingEmail");
+    const { name, email } = nameEmailEl();
+    const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+
+    nameInput.classList.toggle("field-error", !name.trim());
+    emailInput.classList.toggle("field-error", !emailValid);
+
+    if(!name.trim() || !emailValid){
+      msgEl.textContent = "Enter your name and a valid email before confirming.";
+      return;
+    }
+    if(selected.length === 0){
+      msgEl.textContent = "Select at least one seat before confirming.";
+      return;
+    }
+    selected.forEach(([r,c]) => {
+      state.bookings.push({
+        id: `${Date.now()}-${r}-${c}-${Math.random().toString(36).slice(2,7)}`,
+        film: currentFilm,
+        row: r, col: c,
+        name: name.trim(),
+        email: email.trim(),
+        createdAt: new Date().toISOString()
+      });
+    });
+    saveState();
+    selected = [];
+    msgEl.textContent = "";
+    updateTicketDisplay();
+    renderSeatMap();
+    document.getElementById("ticket").scrollIntoView({behavior:"smooth", block:"nearest"});
+  });
+
+  // Re-render mine/taken styling whenever the identity fields change, since
+  // "mine" seats are keyed off the currently entered email.
+  ["bookingName","bookingEmail"].forEach(id => {
+    document.getElementById(id).addEventListener("input", () => {
+      document.getElementById(id).classList.remove("field-error");
+      renderSeatMap();
+    });
+  });
+
+  document.getElementById("ticketReset").addEventListener("click", () => {
+    document.getElementById("ticket").classList.remove("show");
+  });
+
+  renderSeatMap();
+
+  // ---- My Reservations: look up all bookings by email, allow cancelling ----
+  function renderReservations(email){
+    const resResults = document.getElementById("resResults");
+    const norm = normEmail(email);
+    const mine = state.bookings
+      .filter(b => normEmail(b.email) === norm)
+      .sort((a,b) => a.film.localeCompare(b.film) || a.row - b.row || a.col - b.col);
+
+    if(mine.length === 0){
+      resResults.innerHTML = `<div class="res-empty">No reservations found for ${escapeHtml(email)}.</div>`;
+      return;
+    }
+
+    resResults.innerHTML = "";
+    mine.forEach(b => {
+      const row = document.createElement("div");
+      row.className = "res-item";
+      row.innerHTML = `
+        <div>
+          <div class="res-film">${escapeHtml(b.film)}</div>
+          <div class="res-meta">Seat ${ROWS[b.row]}${b.col + 1} · booked ${new Date(b.createdAt).toLocaleDateString()} · ${escapeHtml(b.name)}</div>
+        </div>
+      `;
+      const cancelBtn = document.createElement("button");
+      cancelBtn.type = "button";
+      cancelBtn.textContent = "Cancel";
+      cancelBtn.addEventListener("click", () => {
+        const idx = state.bookings.findIndex(x => x.id === b.id);
+        if(idx > -1) state.bookings.splice(idx, 1);
+        saveState();
+        renderReservations(email);
+        if(b.film === currentFilm) renderSeatMap();
+      });
+      row.appendChild(cancelBtn);
+      resResults.appendChild(row);
+    });
+  }
+
+  document.getElementById("resLookupForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const email = document.getElementById("resEmail").value.trim();
+    if(!email) return;
+    renderReservations(email);
+  });
+
+  // ---- Contact form (client-side only demo) ----
+  document.getElementById("contactForm").addEventListener("submit", function(e){
+    e.preventDefault();
+    const name = document.getElementById("cf-name").value.trim();
+    document.getElementById("formNote").textContent =
+      `Thanks${name ? ", " + name : ""} — this demo form doesn't send yet. Wire it to Formspree, Netlify Forms, or your own inbox to go live.`;
+    this.reset();
+  });
+})();
+</script>
+
+</body>
+</html>
